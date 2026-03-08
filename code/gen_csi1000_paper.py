@@ -134,7 +134,7 @@ el.append(Paragraph(
     "proprietary trading firms. Average daily volume has increased from approximately 50,000 contracts "
     "in the first month to over 300,000 contracts by 2025, making it one of the most liquid "
     "index option products in Asia.", body))
-el.append(PageBreak())
+el.append(Spacer(1, 20))
 
 # ===== 3. LITERATURE =====
 el.append(Paragraph("3. Literature Review", h1))
@@ -171,7 +171,7 @@ el.append(Paragraph(
     "risk metric for short option books, as it captures the 'concavity cost' of being short "
     "convexity. Bertsimas, Kogan, and Lo (2000) derive optimal dynamic hedging strategies "
     "that account for both delta and gamma exposure.", body))
-el.append(PageBreak())
+el.append(Spacer(1, 20))
 
 # ===== 4. DATA =====
 el.append(Paragraph("4. Data", h1))
@@ -217,7 +217,7 @@ if os.path.exists(fig2_path):
         "<i>Figure 1: Panel A shows the distribution of ATM implied volatility across all trading days. "
         "The right-skewed distribution reflects occasional volatility spikes. Panel B shows the IV percentile "
         "rank distribution — only days above the 80th percentile (red dashed line) trigger trade entry.</i>", cap))
-el.append(PageBreak())
+el.append(Spacer(1, 20))
 
 # ===== 5. STRATEGY =====
 el.append(Paragraph("5. Strategy Design", h1))
@@ -275,7 +275,7 @@ el.append(Paragraph(
     "As short option sellers, our theta is positive — we earn time decay each day, "
     "which is the primary source of returns when realized volatility stays below implied volatility.", body))
 
-el.append(PageBreak())
+el.append(Spacer(1, 20))
 
 # ===== 6. RESULTS =====
 el.append(Paragraph("6. Results", h1))
@@ -321,7 +321,7 @@ if os.path.exists(fig4_path):
 
 # Figure 1: Strategy overview panels
 if os.path.exists(fig_path):
-    el.append(PageBreak())
+    el.append(Spacer(1, 12))
     el.append(Image(fig_path, width=6.5*inch, height=5.5*inch))
     el.append(Paragraph(
         "<i>Figure 4: Strategy panels. A: NAV curve. B: CSI 1000 index and ATM IV. "
@@ -360,14 +360,14 @@ if os.path.exists(fig5_path):
         "cumulative P&amp;L by trade sequence, demonstrating steady capital accumulation.</i>", cap))
 
 if os.path.exists(fig6_path):
-    el.append(PageBreak())
+    el.append(Spacer(1, 12))
     el.append(Image(fig6_path, width=6.2*inch, height=4.2*inch))
     el.append(Paragraph(
         "<i>Figure 6: Greek risk exposures over the strategy period. A: Portfolio gamma stays within the "
         "¥200M limit. B: Vega is consistently negative (short volatility exposure). C: Delta is hedged "
         "close to zero. D: Active position count fluctuates with market conditions.</i>", cap))
 
-el.append(PageBreak())
+el.append(Spacer(1, 20))
 
 # 6.2 Daily Position Detail
 el.append(Paragraph("6.2 Daily Position and Greek Exposure Report", h2))
@@ -400,14 +400,21 @@ for _, r in recs.iterrows():
         f"{r['vega']:.0f}", f"{r['nav']/1e6:.2f}",
     ])
 
-cs = 40
-for i in range(0, len(rows)-1, cs):
-    chunk = [hdr] + rows[1+i:1+i+cs]
-    el.append(tbl(chunk, [55,38,30,30,28,25,38,38,38,42]))
-    el.append(Paragraph(f"<i>Table 3 (p{i//cs+1}): Daily Positions & Greeks</i>", cap))
-    if i+cs < len(rows)-1: el.append(PageBreak())
-
-el.append(PageBreak())
+# Single continuous table with repeating header
+all_rows = [hdr] + rows[1:]
+cw = [55,38,30,30,28,25,38,38,38,42]
+t = Table(all_rows, colWidths=cw, repeatRows=1)
+t.setStyle(TableStyle([
+    ('FONTSIZE', (0,0), (-1,-1), 6.5),
+    ('FONTNAME', (0,0), (-1,0), 'Helvetica-Bold'),
+    ('BACKGROUND', (0,0), (-1,0), colors.Color(0.95,0.95,0.95)),
+    ('GRID', (0,0), (-1,-1), 0.3, colors.Color(0.8,0.8,0.8)),
+    ('ROWBACKGROUNDS', (0,1), (-1,-1), [colors.white, colors.Color(0.98,0.98,0.98)]),
+    ('TOPPADDING', (0,0), (-1,-1), 2),
+    ('BOTTOMPADDING', (0,0), (-1,-1), 2),
+]))
+el.append(t)
+el.append(Paragraph("<i>Table 3: Daily Positions & Greeks (complete record)</i>", cap))
 
 # 6.3 Trade Log
 el.append(Paragraph("6.3 Individual Trade Log", h2))
@@ -428,14 +435,22 @@ if len(trades) > 0:
             f"{t['hedge_pnl']/1e3:+.0f}", f"{t['total_pnl']/1e3:+.0f}",
         ])
 
-    cs = 40
-    for i in range(0, len(trows)-1, cs):
-        chunk = [thdr] + trows[1+i:1+i+cs]
-        el.append(tbl(chunk, [52,52,22,32,30,20,42,42,42,42]))
-        el.append(Paragraph(f"<i>Table 4 (p{i//cs+1}): Trade Log</i>", cap))
-        if i+cs < len(trows)-1: el.append(PageBreak())
+    all_trows = [thdr] + trows[1:]
+    cw2 = [52,52,22,32,30,20,42,42,42,42]
+    t2 = Table(all_trows, colWidths=cw2, repeatRows=1)
+    t2.setStyle(TableStyle([
+        ('FONTSIZE', (0,0), (-1,-1), 6.5),
+        ('FONTNAME', (0,0), (-1,0), 'Helvetica-Bold'),
+        ('BACKGROUND', (0,0), (-1,0), colors.Color(0.95,0.95,0.95)),
+        ('GRID', (0,0), (-1,-1), 0.3, colors.Color(0.8,0.8,0.8)),
+        ('ROWBACKGROUNDS', (0,1), (-1,-1), [colors.white, colors.Color(0.98,0.98,0.98)]),
+        ('TOPPADDING', (0,0), (-1,-1), 2),
+        ('BOTTOMPADDING', (0,0), (-1,-1), 2),
+    ]))
+    el.append(t2)
+    el.append(Paragraph("<i>Table 4: Individual Trade Log (complete record)</i>", cap))
 
-el.append(PageBreak())
+el.append(Spacer(1, 20))
 
 # ===== 7. RISK ANALYSIS =====
 el.append(Paragraph("7. Risk Analysis", h1))
@@ -463,7 +478,7 @@ el.append(Paragraph(
     "directional (delta) to convexity (gamma/vega), isolating the pure volatility premium. "
     "The cost of hedging reduces total return but dramatically improves the Sharpe ratio and "
     "reduces maximum drawdown.", body))
-el.append(PageBreak())
+el.append(Spacer(1, 20))
 
 # ===== 8. DISCUSSION =====
 el.append(Paragraph("8. Discussion", h1))
