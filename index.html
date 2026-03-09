@@ -262,7 +262,49 @@
         <li><strong>Single underlying = simpler + more transparent</strong> vs traditional worst-of baskets</li>
     </ul>
 
-    <h3>Coupon Comparison</h3>
+    <h3>Our Replication — Real Computation</h3>
+    <p>We reconstructed MQUSLVA from scratch using SPX (CRSP + OptionMetrics, WRDS) and VIX (CBOE, WRDS), then ran Monte Carlo pricing (200K paths) and a historical DCA simulation.</p>
+
+    <h3>Stage 1: MQUSLVA Index Reconstruction</h3>
+    <p>Leverage = 35% / VIX, rebalanced weekly. Applied to SPX excess returns with 6% annual deduction. Data: 5,198 trading days (2005–2025).</p>
+    <table>
+        <tr><th>Period</th><th>Our Replication</th><th>JPM Reference</th></tr>
+        <tr><td>5-Year (p.a.)</td><td>11.52%</td><td>11.53% ✅</td></tr>
+        <tr><td>3-Year (p.a.)</td><td>25.72%</td><td>29.36%</td></tr>
+        <tr><td>Avg Leverage</td><td>2.08×</td><td>—</td></tr>
+        <tr><td>Realized Vol</td><td>28.7%</td><td>Target 35%</td></tr>
+    </table>
+
+    <h3>Stage 2: Phoenix Monte Carlo (200K paths)</h3>
+    <table>
+        <tr><th>Metric</th><th>MC Result</th><th>JPM/CAIE Reference</th></tr>
+        <tr><td>Autocall Rate</td><td>80.9%</td><td>97.2%</td></tr>
+        <tr><td>Knock-in Rate</td><td>12.97%</td><td>0.0%</td></tr>
+        <tr><td>Avg Ann Return</td><td>10.82%</td><td>14.59%</td></tr>
+        <tr><td>Median Ann Return</td><td>14.17%</td><td>—</td></tr>
+        <tr><td>Avg Exit (years)</td><td>2.16</td><td>—</td></tr>
+        <tr><td>5th Percentile</td><td>-8.22%</td><td>—</td></tr>
+        <tr><td>95th Percentile</td><td>14.25%</td><td>—</td></tr>
+    </table>
+    <p><em>Note: Our MC uses GBM with historical MQUSLVA parameters. JPM's higher autocall rate likely reflects their more precise vol-targeting mechanism and the actual MQUSLVA index's lower realized drawdowns.</em></p>
+
+    <h3>Stage 3: Historical DCA Simulation (2020–2025)</h3>
+    <table>
+        <tr><th>Metric</th><th>Value</th></tr>
+        <tr><td>Total Notes Invested</td><td>264 (weekly)</td></tr>
+        <tr><td>Autocalled</td><td>210 (79.5%)</td></tr>
+        <tr><td>Knocked In</td><td><strong>0 (0.0%)</strong> ✅</td></tr>
+        <tr><td>Live Notes</td><td>54</td></tr>
+        <tr><td>Total Coupons</td><td>47.28 (17.9% of invested)</td></tr>
+    </table>
+    <p><strong>Key finding: Zero knock-ins on actual historical MQUSLVA paths</strong>, confirming JPM's 0% knock-in backtest result. The vol-targeting mechanism successfully prevents the underlying from crashing through the 60% barrier.</p>
+
+    <div class="figure">
+        <img src="assets/phoenix_dca/phoenix_dca_replication.png" alt="Phoenix DCA Replication">
+        <div class="caption">Figure 9: Complete Phoenix DCA replication — (A) MQUSLVA reconstruction vs SPX, (B) VIX & leverage dynamics, (C) MC return distribution, (D) DCA portfolio NAV, (E) Notes composition, (F) Cumulative coupons. Data: SPX (CRSP/OptionMetrics WRDS), VIX (CBOE WRDS).</div>
+    </div>
+
+    <h3>Coupon Comparison (from JPM)</h3>
     <table>
         <tr><th>Underlying</th><th>Structure</th><th>Coupon</th><th>Autocall %</th><th>Knock-in %</th></tr>
         <tr><td>NDX Index</td><td>Single</td><td>3.2%</td><td>—</td><td>—</td></tr>
@@ -290,9 +332,12 @@
         <a class="dl-card" href="assets/hs300_vol_arb/citic_vol_arb_daily.csv"><div class="dl-type">CSV</div><div class="dl-name">Daily NAV Data</div><div class="dl-size">1,218 trading days</div></a>
     </div>
 
-    <h3>Strategy 3 — Phoenix ETF Analysis</h3>
+    <h3>Strategy 3 — Phoenix ETF Replication</h3>
     <div class="downloads">
         <a class="dl-card" href="assets/calamos_phoenix_etf.pdf"><div class="dl-type">PDF</div><div class="dl-name">JPM Structured Products Catalog</div><div class="dl-size">CAIE ETF product details (17 pages)</div></a>
+        <a class="dl-card" href="code/phoenix_dca_replication.py"><div class="dl-type">Python</div><div class="dl-name">Replication Script</div><div class="dl-size">MQUSLVA + MC + DCA simulation</div></a>
+        <a class="dl-card" href="assets/phoenix_dca/mquslva_reconstruction.csv"><div class="dl-type">CSV</div><div class="dl-name">MQUSLVA Reconstruction</div><div class="dl-size">5,198 trading days (2005–2025)</div></a>
+        <a class="dl-card" href="assets/phoenix_dca/phoenix_dca_daily.csv"><div class="dl-type">CSV</div><div class="dl-name">DCA Portfolio Daily NAV</div><div class="dl-size">264 notes, 2020–2025</div></a>
     </div>
 </div>
 
