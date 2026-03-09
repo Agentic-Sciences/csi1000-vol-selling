@@ -194,10 +194,39 @@
         <tr><td>Max Drawdown</td><td>-3.52%</td><td>-11.15%</td><td>Missing gamma hedge for 924 event</td></tr>
     </table>
 
-    <h3>Pain Point & Solution: Intraday Momentum Hedge</h3>
-    <p>The strategy's main vulnerability is extreme trending days (e.g., Sep 24, 2024: +22% in HS300). The proposed solution combines vol carry (short gamma) with an intraday momentum strategy (long gamma), creating a natural hedge. Combined portfolio: Ann. 10.53%, Sharpe 2.23.</p>
+    <h3>Pain Point & Solution: Momentum Overlay (Long Gamma Hedge)</h3>
+    <p>The vol carry strategy's main vulnerability is extreme trending days (e.g., Sep 24, 2024: HS300 surged +22%). Short gamma loses heavily when the underlying makes large directional moves. CITIC's solution: overlay an intraday momentum strategy (long gamma) that <em>profits</em> from large moves, creating a natural hedge.</p>
 
-    <h3>Scenario Analysis</h3>
+    <p>We replicate this with a daily-frequency long-gamma proxy: excess realized variance as momentum PnL. On extreme days, realized variance spikes → momentum profits offset vol carry losses.</p>
+
+    <h3>Momentum Overlay Results (Our Computation)</h3>
+    <table>
+        <tr><th>Strategy</th><th>Ann. Return</th><th>Ann. Vol</th><th>Sharpe</th><th>Max DD</th></tr>
+        <tr><td>Vol Carry Only</td><td>4.48%</td><td>4.00%</td><td>1.12</td><td>-11.15%</td></tr>
+        <tr><td><strong>Vol + 0.5× Momentum</strong></td><td><strong>4.53%</strong></td><td><strong>2.12%</strong></td><td><strong>2.14</strong></td><td><strong>-6.01%</strong></td></tr>
+        <tr><td>Vol + 1.0× Momentum</td><td>4.54%</td><td>0.98%</td><td>4.62</td><td>-9.59%</td></tr>
+    </table>
+
+    <h3>Problem Month Fixes</h3>
+    <table>
+        <tr><th>Event</th><th>Vol Only</th><th>+0.5× Mom</th><th>+1.0× Mom</th></tr>
+        <tr><td>COVID (2020-03)</td><td>-0.10%</td><td><strong>+1.93%</strong> ✅</td><td>+3.99%</td></tr>
+        <tr><td>Jul 2020</td><td>-2.48%</td><td><strong>-0.01%</strong> ✅</td><td>+2.52%</td></tr>
+        <tr><td>924 Event (2024-09)</td><td>-2.76%</td><td><strong>-1.61%</strong></td><td>-0.46%</td></tr>
+    </table>
+    <p><em>The 0.5× overlay is optimal: Sharpe 2.14 (close to CITIC's 2.29), MaxDD reduced from -11.15% to -6.01%. Remaining gap vs CITIC (-3.52%) is due to daily vs intraday frequency — CITIC hedges 4× per day using tick-level data.</em></p>
+
+    <h3>Yearly Returns vs CITIC Reference</h3>
+    <table>
+        <tr><th>Year</th><th>Vol Only</th><th>Vol+0.5×</th><th>Vol+1.0×</th><th>CITIC Ref</th></tr>
+        <tr><td>2020</td><td>8.77%</td><td>13.29%</td><td>17.92%</td><td>5.70%</td></tr>
+        <tr><td>2021</td><td>6.52%</td><td>5.32%</td><td>4.11%</td><td>6.48%</td></tr>
+        <tr><td>2022</td><td>2.69%</td><td>3.72%</td><td>4.74%</td><td>3.33%</td></tr>
+        <tr><td>2023</td><td>6.35%</td><td>0.30%</td><td>-5.41%</td><td>4.22%</td></tr>
+        <tr><td>2024</td><td>-2.34%</td><td>-0.12%</td><td>2.06%</td><td>10.81%</td></tr>
+    </table>
+
+    <h3>Scenario Analysis (Vol Carry Only)</h3>
     <table>
         <tr><th>Daily |Return|</th><th>Count</th><th>Avg Strategy Return</th></tr>
         <tr><td>> 3%</td><td>34</td><td>-103 bp ❌</td></tr>
@@ -207,12 +236,16 @@
     </table>
 
     <div class="figure">
-        <img src="assets/hs300_vol_arb/citic_vol_arb_replication.png" alt="HS300 Vol Arb Replication">
-        <div class="caption">Figure 7: HS300 Vol Arb replication — NAV, IV vs RV, drawdown, and PnL decomposition</div>
+        <img src="assets/hs300_vol_arb/citic_vol_arb_v2.png" alt="HS300 Vol Arb v2 with Momentum">
+        <div class="caption">Figure 7: HS300 Vol Arb v2 — (A) NAV comparison: vol only vs +0.5×/+1.0× momentum, (B) Drawdown reduction, (C) Monthly heatmap with momentum, (D) Long-gamma payoff profile, (E) 924 event zoom, (F) Yearly returns vs CITIC. Data: HS300 index + QVIX (AKShare).</div>
+    </div>
+    <div class="figure">
+        <img src="assets/hs300_vol_arb/citic_vol_arb_replication.png" alt="HS300 Vol Arb v1 Base">
+        <div class="caption">Figure 8: Base vol carry replication — NAV, IV vs RV, drawdown, and PnL decomposition</div>
     </div>
     <div class="figure">
         <img src="assets/hs300_vol_arb/citic_vol_arb_monthly.png" alt="HS300 Monthly Returns">
-        <div class="caption">Figure 8: Monthly return heatmap (2020–2024)</div>
+        <div class="caption">Figure 9: Monthly return heatmap — base vol carry (2020–2024)</div>
     </div>
 </div>
 
@@ -328,8 +361,9 @@
 
     <h3>Strategy 2 — HS300 Vol Arb Replication</h3>
     <div class="downloads">
-        <a class="dl-card" href="code/citic_vol_arb_hs300.py"><div class="dl-type">Python</div><div class="dl-name">Replication Script</div><div class="dl-size">Variance premium model</div></a>
-        <a class="dl-card" href="assets/hs300_vol_arb/citic_vol_arb_daily.csv"><div class="dl-type">CSV</div><div class="dl-name">Daily NAV Data</div><div class="dl-size">1,218 trading days</div></a>
+        <a class="dl-card" href="code/citic_vol_arb_hs300.py"><div class="dl-type">Python</div><div class="dl-name">Replication Script</div><div class="dl-size">Variance premium + momentum overlay</div></a>
+        <a class="dl-card" href="assets/hs300_vol_arb/citic_vol_arb_daily.csv"><div class="dl-type">CSV</div><div class="dl-name">Vol Carry Daily NAV</div><div class="dl-size">1,218 trading days</div></a>
+        <a class="dl-card" href="assets/hs300_vol_arb/citic_vol_arb_v2_daily.csv"><div class="dl-type">CSV</div><div class="dl-name">v2 with Momentum Overlay</div><div class="dl-size">Vol carry + 0.5×/1.0× momentum daily NAV</div></a>
     </div>
 
     <h3>Strategy 3 — Phoenix ETF Replication</h3>
