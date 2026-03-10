@@ -378,51 +378,57 @@
 </div>
 </div>
 
-<!-- AI Research Assistant -->
-<div class="container" style="margin-top: 40px;">
-    <div style="background: #f8f8fa; border: 1px solid #e5e5e5; border-radius: 16px; padding: 28px; text-align: center;">
-        <h3 style="font-size: 18px; margin-bottom: 6px;">💰 Ask ComeWealth</h3>
-        <p style="color: #888; font-size: 13px; margin-bottom: 16px;">Have questions about these strategies? Talk to our AI research assistant — voice or video.</p>
+<!-- Floating AI Assistant Button -->
+<div id="cw-fab" onclick="cwTogglePanel()" style="position:fixed; bottom:24px; right:24px; width:56px; height:56px; border-radius:50%; background:linear-gradient(135deg,#627EEA,#9B59B6); color:white; display:flex; align-items:center; justify-content:center; font-size:24px; cursor:pointer; box-shadow:0 4px 20px rgba(98,126,234,0.4); z-index:9999; transition:transform 0.3s;">🎙️</div>
+
+<!-- Floating AI Panel -->
+<div id="cw-panel" style="display:none; position:fixed; bottom:90px; right:24px; width:340px; max-height:520px; background:white; border:1px solid #e5e5e5; border-radius:20px; box-shadow:0 8px 40px rgba(0,0,0,0.15); z-index:9998; overflow:hidden;">
+    <div style="padding:20px; text-align:center;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+            <h3 style="font-size:15px; margin:0;">🎙️ AI Research Assistant</h3>
+            <span onclick="cwTogglePanel()" style="cursor:pointer; font-size:18px; color:#aaa;">✕</span>
+        </div>
+        <p style="color:#888; font-size:12px; margin-bottom:14px;">Ask about volatility strategies, options pricing, or any research question — voice or video.</p>
 
         <!-- Orb / Video Preview -->
-        <div id="cw-video-container" style="display:none; width:140px; height:140px; border-radius:50%; overflow:hidden; margin:0 auto 12px; border:3px solid #ddd;">
+        <div id="cw-video-container" style="display:none; width:100px; height:100px; border-radius:50%; overflow:hidden; margin:0 auto 10px; border:3px solid #ddd;">
             <video id="cw-video-preview" autoplay playsinline muted style="width:100%;height:100%;object-fit:cover;transform:scaleX(-1);"></video>
         </div>
-        <div id="cw-orb-container" style="width:100px; height:100px; margin:0 auto 12px;">
-            <div id="cw-orb" style="width:100px; height:100px; border-radius:50%; background:linear-gradient(135deg,#627EEA,#9B59B6); opacity:0.25; transition:all 0.4s;"></div>
+        <div id="cw-orb-container" style="width:80px; height:80px; margin:0 auto 10px;">
+            <div id="cw-orb" style="width:80px; height:80px; border-radius:50%; background:linear-gradient(135deg,#627EEA,#9B59B6); opacity:0.25; transition:all 0.4s;"></div>
         </div>
 
-        <div id="cw-status" style="font-size: 13px; color: #aaa; margin-bottom: 12px;">Tap to start a conversation</div>
+        <div id="cw-status" style="font-size:12px; color:#aaa; margin-bottom:10px;">Tap Start to begin</div>
 
         <!-- Mode Toggle -->
-        <div style="margin-bottom: 10px; font-size: 12px; color: #999;">
-            <label style="cursor:pointer; padding:4px 12px; border:1px solid #ddd; border-radius:16px; margin:0 3px;" id="cw-mode-auto-label">
+        <div style="margin-bottom:8px; font-size:11px; color:#999;">
+            <label style="cursor:pointer; padding:3px 10px; border:1px solid #ddd; border-radius:14px; margin:0 2px;" id="cw-mode-auto-label">
                 <input type="radio" name="cw-mode" value="auto" checked style="display:none" onchange="cwSetMode('auto')"> 🎙️ Auto
             </label>
-            <label style="cursor:pointer; padding:4px 12px; border:1px solid #ddd; border-radius:16px; margin:0 3px;" id="cw-mode-ptt-label">
+            <label style="cursor:pointer; padding:3px 10px; border:1px solid #ddd; border-radius:14px; margin:0 2px;" id="cw-mode-ptt-label">
                 <input type="radio" name="cw-mode" value="ptt" style="display:none" onchange="cwSetMode('ptt')"> 👆 Push to Talk
             </label>
         </div>
 
-        <div style="display:flex; justify-content:center; gap:8px; flex-wrap:wrap;">
-            <button onclick="cwStart()" id="cw-start-btn" style="padding:10px 22px; border:none; border-radius:24px; background:linear-gradient(135deg,#627EEA,#9B59B6); color:white; font-weight:600; font-size:14px; cursor:pointer;">🎙️ Start</button>
-            <button onclick="cwToggleVideo()" id="cw-video-btn" style="padding:10px 22px; border:1px solid #ddd; border-radius:24px; background:white; color:#333; font-weight:600; font-size:14px; cursor:pointer;">📷 Video</button>
-            <button onclick="cwStop()" id="cw-stop-btn" disabled style="padding:10px 22px; border:none; border-radius:24px; background:#ff4466; color:white; font-weight:600; font-size:14px; cursor:pointer; opacity:0.4;">⏹️ Stop</button>
+        <div style="display:flex; justify-content:center; gap:6px; flex-wrap:wrap;">
+            <button onclick="cwStart()" id="cw-start-btn" style="padding:8px 18px; border:none; border-radius:20px; background:linear-gradient(135deg,#627EEA,#9B59B6); color:white; font-weight:600; font-size:13px; cursor:pointer;">🎙️ Start</button>
+            <button onclick="cwToggleVideo()" id="cw-video-btn" style="padding:8px 18px; border:1px solid #ddd; border-radius:20px; background:white; color:#333; font-weight:600; font-size:13px; cursor:pointer;">📷 Video</button>
+            <button onclick="cwStop()" id="cw-stop-btn" disabled style="padding:8px 18px; border:none; border-radius:20px; background:#ff4466; color:white; font-weight:600; font-size:13px; cursor:pointer; opacity:0.4;">⏹️ Stop</button>
         </div>
 
         <!-- PTT Button -->
-        <button id="cw-ptt-btn" style="display:none; width:90%; margin:10px auto 0; padding:12px; border:none; border-radius:24px; background:linear-gradient(135deg,#627EEA,#9B59B6); color:white; font-weight:600; font-size:15px; cursor:pointer;"
+        <button id="cw-ptt-btn" style="display:none; width:90%; margin:8px auto 0; padding:10px; border:none; border-radius:20px; background:linear-gradient(135deg,#627EEA,#9B59B6); color:white; font-weight:600; font-size:14px; cursor:pointer;"
             ontouchstart="cwPttDown()" ontouchend="cwPttUp()" onmousedown="cwPttDown()" onmouseup="cwPttUp()">🎤 Hold to Talk</button>
 
-        <div style="margin-top: 10px; font-size: 11px; color: #bbb;">
-            <label>Voice: <select id="cw-voice" style="font-size:11px; padding:3px; border:1px solid #ddd; border-radius:6px;">
+        <div style="margin-top:8px; font-size:10px; color:#bbb;">
+            <label>Voice: <select id="cw-voice" style="font-size:10px; padding:2px; border:1px solid #ddd; border-radius:4px;">
                 <option value="Aoede" selected>Aoede</option>
                 <option value="Puck">Puck</option>
                 <option value="Charon">Charon</option>
                 <option value="Kore">Kore</option>
                 <option value="Fenrir">Fenrir</option>
             </select></label>
-            <label style="margin-left:8px;">Lang: <select id="cw-lang" style="font-size:11px; padding:3px; border:1px solid #ddd; border-radius:6px;">
+            <label style="margin-left:6px;">Lang: <select id="cw-lang" style="font-size:10px; padding:2px; border:1px solid #ddd; border-radius:4px;">
                 <option value="auto" selected>Auto</option>
                 <option value="zh">中文</option>
                 <option value="en">English</option>
@@ -430,15 +436,28 @@
         </div>
 
         <!-- Transcript -->
-        <div id="cw-transcript" style="margin-top:14px; background:white; border:1px solid #eee; border-radius:12px; padding:12px; max-height:150px; overflow-y:auto; text-align:left; font-size:13px; line-height:1.5; display:none;"></div>
+        <div id="cw-transcript" style="margin-top:10px; background:#f8f8fa; border:1px solid #eee; border-radius:10px; padding:10px; max-height:120px; overflow-y:auto; text-align:left; font-size:12px; line-height:1.4; display:none;"></div>
 
-        <p style="margin-top:12px; font-size:11px; color:#ccc;">Powered by Gemini 2.5 Flash · ComeWealth AI Research Agent</p>
+        <p style="margin-top:8px; font-size:10px; color:#ccc;">Powered by Gemini · AI Research Assistant</p>
     </div>
 </div>
 
 <canvas id="cw-canvas" style="display:none;"></canvas>
 
 <script>
+function cwTogglePanel() {
+    const panel = document.getElementById('cw-panel');
+    const fab = document.getElementById('cw-fab');
+    if (panel.style.display === 'none') {
+        panel.style.display = 'block';
+        fab.style.transform = 'rotate(45deg)';
+        fab.textContent = '✕';
+    } else {
+        panel.style.display = 'none';
+        fab.style.transform = 'rotate(0deg)';
+        fab.textContent = '🎙️';
+    }
+}
 (function() {
     const API_KEY = 'AIzaSyAtGVCnCvgATp0f2tw3hHhQdyOOE_yCD1M';
     const MODEL = 'gemini-2.5-flash-native-audio-latest';
@@ -583,7 +602,7 @@
             ws.onopen=()=>{
                 const v=document.getElementById('cw-voice').value;
                 const l=document.getElementById('cw-lang').value;
-                let sys="You are ComeWealth (来财), an AI research assistant specializing in volatility strategies, options pricing, and quantitative finance. You have deep knowledge of CSI 1000 vol selling, HS300 vol arbitrage, and structured products like Phoenix autocallable notes. Answer questions about these strategies clearly and concisely. Do NOT stop mid-sentence. Always complete your full thought. ";
+                let sys="You are an AI research assistant specializing in volatility strategies, options pricing, and quantitative finance. You have deep knowledge of CSI 1000 vol selling, HS300 vol arbitrage, and structured products like Phoenix autocallable notes. Answer questions about these strategies clearly and concisely. Do NOT stop mid-sentence. Always complete your full thought. ";
                 if(l==='zh')sys+="Respond in Chinese.";
                 else if(l==='en')sys+="Respond in English.";
                 else sys+="Respond in the language the user speaks.";
@@ -626,7 +645,6 @@
     <div class="container">
         <p><strong>Agentic Sciences</strong> — Quantitative Research Lab</p>
         <p style="margin-top: 8px;">Data sources: WRDS (CRSP, OptionMetrics, CBOE), AKShare (CSI 1000 / HS300 options, QVIX, IF futures) · All computations use real market data</p>
-        <p style="margin-top: 8px;"><a href="https://www.linkedin.com/company/agentic-sciences/">LinkedIn</a></p>
     </div>
 </footer>
 
