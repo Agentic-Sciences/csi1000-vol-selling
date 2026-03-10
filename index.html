@@ -467,7 +467,7 @@ function cwTogglePanel() {
     }
 }
 (function() {
-    const API_KEY = 'AIzaSyAtGVCnCvgATp0f2tw3hHhQdyOOE_yCD1M';
+    const API_KEY = new URLSearchParams(window.location.search).get('key') || '';
     const MODEL = 'gemini-2.5-flash-native-audio-latest';
     const WS_URL = `wss://generativelanguage.googleapis.com/ws/google.ai.generativelanguage.v1beta.GenerativeService.BidiGenerateContent?key=${API_KEY}`;
     const NOISE_GATE = 0.018;
