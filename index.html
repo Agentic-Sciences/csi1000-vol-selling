@@ -658,7 +658,7 @@ function cwTogglePanel() {
         log(text, 'user');
 
         if (ws && ws.readyState === 1) {
-            // Send via live session
+            // Send via live voice session
             ws.send(JSON.stringify({
                 clientContent: {
                     turns: [{ role: "user", parts: [{ text: text }] }],
@@ -666,15 +666,15 @@ function cwTogglePanel() {
                 }
             }));
         } else {
-            // Text-only mode via REST API
+            // Two-phase: instant Gemini answer + flag for deep computation
             setStat('Thinking...', '#627EEA');
             try {
                 const payload = {
                     contents: [{ parts: [{ text: text }] }],
-                    systemInstruction: { parts: [{ text: "You are an AI research assistant specializing in volatility strategies, options pricing, and quantitative finance. You have deep knowledge of CSI 1000 vol selling, HS300 vol arbitrage, and structured products like Phoenix autocallable notes. Answer clearly and concisely." }] }
+                    systemInstruction: { parts: [{ text: "You are an AI research assistant specializing in volatility strategies, options pricing, and quantitative finance. You have deep knowledge of CSI 1000 vol selling, HS300 vol arbitrage, and structured products like Phoenix autocallable notes. Answer clearly and concisely. If the question requires real data computation (e.g., specific numbers, backtests, fresh calculations), say so and explain what computation would be needed. The research server can run Python computations on institutional-grade financial datasets." }] }
                 };
-                const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${API_KEY}`;
-                const resp = await fetch(url, {
+                const gUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${API_KEY}`;
+                const resp = await fetch(gUrl, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload)
@@ -682,6 +682,18 @@ function cwTogglePanel() {
                 const result = await resp.json();
                 const answer = result.candidates?.[0]?.content?.parts?.[0]?.text || 'No response';
                 log(answer, 'ai');
+
+                // Store request for backend processing via localStorage
+                const requests = JSON.parse(localStorage.getItem('cw_requests') || '[]');
+                requests.push({
+                    id: Date.now().toString(36),
+                    timestamp: new Date().toISOString(),
+                    query: text,
+                    answer: answer.substring(0, 500),
+                    status: 'logged'
+                });
+                localStorage.setItem('cw_requests', JSON.stringify(requests));
+
                 setStat('Ready', '#aaa');
             } catch (e) {
                 log('Error: ' + e.message, 'system');
